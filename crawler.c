@@ -7,6 +7,11 @@
 
 #define BASE_URL "www.chitkara.edu.in"
 #define urlLength 1000
+struct LinkList {
+    char* url;
+    int depth;
+    struct LinkList *next;
+}*listHead;
 char* returnSubUrl(char *url) {
     int i = 0;
     char *subUrl = (char*)malloc(sizeof(char) * urlLength);
@@ -235,9 +240,26 @@ char* convertDataInStr(char *fileName) {
         ch = getc(file);
         i++;
     }
+    
     fileContent[i] = '\0';
 //    fclose(file);
     return fileContent;
+}
+void putInList(char **links) {
+    struct LinkList *obj, *listHeadPtr;
+    listHead = (struct LinkList*)malloc(sizeof(struct LinkList));
+    listHeadPtr = listHead;
+    listHeadPtr->url = links[0];
+    listHeadPtr->next = 0;
+    for(int i = 1;i<100;i++) {
+    
+        obj = (struct LinkList*)malloc(sizeof(struct LinkList));
+        //obj->url = (char*)malloc(sizeof(char) * 1000);
+        obj->url = links[i];
+        obj->next = 0;
+        listHeadPtr->next = obj;
+        listHeadPtr = listHeadPtr->next;
+    }
 }
 int main(int argc, char* argv[]) {
 
@@ -251,10 +273,10 @@ int main(int argc, char* argv[]) {
         links[i] = (char*)malloc(sizeof(char)*100);
         pos = GetNextURL(fileContent, argv[1], links[i], pos);
     }
-    int i = 0;
-    while(i<100) {
-        printf("%s\n", links[i]);
-        i++;
+    putInList(links);
+    while(listHead->next != 0) {
+        printf("%s\n", listHead->url);
+        listHead = listHead->next;
     }
     return 0;
 }
